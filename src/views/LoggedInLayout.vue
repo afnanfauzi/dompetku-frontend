@@ -17,7 +17,7 @@
     <v-main class="base">
 
     <!-- Provides the application the proper gutter -->
-        <v-container>
+        <v-container fluid>
 
         <!-- If using vue-router -->
         <router-view></router-view>

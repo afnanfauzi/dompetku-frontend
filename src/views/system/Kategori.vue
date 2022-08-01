@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <v-toolbar-title class="mb-3">Kategori</v-toolbar-title>
     <v-data-table
     :headers="headers"
     :items="dataku"
@@ -10,12 +11,6 @@
       <v-toolbar
         flat
       >
-        <v-toolbar-title>Kategori</v-toolbar-title>
-         <v-divider
-          class="mx-4"
-          inset
-          vertical
-        ></v-divider>
         <v-spacer></v-spacer>
         <v-dialog
           v-model="dialog"
@@ -23,7 +18,7 @@
         >
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              color="primary"
+              color="accent"
               dark
               class="mb-2"
               v-bind="attrs"
@@ -76,6 +71,7 @@
                       v-model="editedItem.plot"
                       label="Plot Keuangan"
                       outlined
+                      prefix="Rp "
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -103,13 +99,15 @@
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
-            <v-card-title class="text-h4">Apakah kamu yakin akan menghapus data ini?</v-card-title>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete">Tutup</v-btn>
-              <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
-              <v-spacer></v-spacer>
-            </v-card-actions>
+              <v-card-title class="text-h5">
+              Hapus Data
+              </v-card-title>
+              <v-card-text>Apakah kamu yakin akan menghapus data ini?</v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="closeDelete">Tutup</v-btn>
+                <v-btn color="blue darken-1" text @click="deleteItemConfirm">Hapus</v-btn>
+              </v-card-actions>
           </v-card>
         </v-dialog>
       </v-toolbar>
@@ -131,7 +129,7 @@
     </template>
     <template v-slot:no-data>
       <v-btn
-        color="primary"
+        color="accent"
         @click="initialize"
       >
         Reset
@@ -169,18 +167,14 @@
       dataku: [],
       editedIndex: -1,
       editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        nama: '',
+        status: '',
+        plot: 0,
       },
       defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        nama: '',
+        status: '',
+        plot: 0,
       },
       status: ['Aktif', 'Nonaktif'],
     }),

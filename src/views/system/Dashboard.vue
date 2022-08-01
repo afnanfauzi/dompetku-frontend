@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <v-toolbar-title class="mb-3">Dashboard</v-toolbar-title>
     <v-row>
        <v-col
         cols="12"
@@ -19,7 +20,7 @@
               dense
               v-model="dateRangeText"
               label="Pilih Periode"
-              append-icon="mdi-calendar"
+              prepend-inner-icon="mdi-calendar"
               readonly
               v-bind="attrs"
               v-on="on"
@@ -49,7 +50,7 @@
         </v-dialog>
       </v-col>
     </v-row>
-    <v-row>
+    <v-row class="mt-n7">
       <v-col
         cols="12"
         sm="4"
@@ -86,7 +87,6 @@
         </v-card>
       </v-col>
     </v-row>
-    
   </v-container>
 </template>
 
