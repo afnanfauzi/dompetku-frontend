@@ -116,7 +116,7 @@
     <template
         v-slot:body="{ items }"
       >
-        <tbody>
+        <tbody v-if="items.length > 0">
           <tr
             v-for="item in items"
             :key="item.id"
@@ -158,14 +158,11 @@
             </td>
           </tr>
         </tbody>
-    </template>
-    <template v-slot:no-data>
-      <v-btn
-        color="accent"
-        @click="initialize"
-      >
-        Reset
-      </v-btn>
+         <tbody v-else>
+            <tr>
+              <td :colspan="headers.length" style="text-align: center">Data tidak tersedia.</td>
+            </tr>
+          </tbody>
     </template>
 
      <!-- <template v-slot:item.is_active="{ item }">
@@ -204,6 +201,7 @@ import axios from "axios";
   export default {
     data: () => ({
       token: localStorage.getItem('token'),
+      user_id: localStorage.getItem('id_user'),
       url:'',
       dialog: false,
       dialogDelete: false,
@@ -260,7 +258,7 @@ import axios from "axios";
 
     methods: {
       initialize () {
-        axios.get(this.url,  {headers: {'Authorization': 'Bearer '+this.token, 'Content-Type': 'application/json', 'Accept': 'application/json'}, params:{paging: this.paging, search:this.search}})
+        axios.get(this.url,  {headers: {'Authorization': 'Bearer '+this.token, 'Content-Type': 'application/json', 'Accept': 'application/json'}, params:{paging: this.paging, search:this.search, user_id:this.user_id}})
         .then(response => {
           this.dataku = response.data.data.data
         })
@@ -343,6 +341,7 @@ import axios from "axios";
             nama_kategori: this.editedItem.nama_kategori,
             is_active: this.editedItem.status,
             plot_uang: this.editedItem.plot_uang,
+            user_id: this.user_id,
           };
 
           this.loading = true
