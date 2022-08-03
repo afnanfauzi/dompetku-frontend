@@ -53,7 +53,7 @@
           { title: 'Pengaturan', icon: 'mdi-cogs', link: '/pengaturan' },
         ],
         right: null,
-
+        model:'',
         dompet: require('@/assets/wallet.svg')
       }
     },

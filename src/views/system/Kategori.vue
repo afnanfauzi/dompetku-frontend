@@ -4,8 +4,9 @@
     <v-data-table
     :headers="headers"
     :items="dataku"
-    sort-by="calories"
+    sort-by="nama_kategori"
     class="elevation-1"
+    :loading="loading"
   >
     <template v-slot:top>
       <v-toolbar
@@ -41,7 +42,7 @@
                     md="12"
                   >
                     <v-text-field
-                      v-model="editedItem.nama"
+                      v-model="editedItem.nama_kategori"
                       label="Nama Kategori"
                       outlined
                     ></v-text-field>
@@ -68,7 +69,7 @@
                     md="12"
                   >
                     <v-text-field
-                      v-model="editedItem.plot"
+                      v-model="editedItem.plot_uang"
                       label="Plot Keuangan"
                       outlined
                       prefix="Rp "
@@ -97,7 +98,7 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
+        <!-- <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
               <v-card-title class="text-h5">
               Hapus Data
@@ -109,23 +110,54 @@
                 <v-btn color="blue darken-1" text @click="deleteItemConfirm">Hapus</v-btn>
               </v-card-actions>
           </v-card>
-        </v-dialog>
+        </v-dialog> -->
       </v-toolbar>
     </template>
-    <template v-slot:item.actions="{ item }">
-      <v-icon
-        small
-        class="mr-2"
-        @click="editItem(item)"
+    <template
+        v-slot:body="{ items }"
       >
-        mdi-pencil
-      </v-icon>
-      <v-icon
-        small
-        @click="deleteItem(item)"
-      >
-        mdi-delete
-      </v-icon>
+        <tbody>
+          <tr
+            v-for="item in items"
+            :key="item.id"
+          >
+            <td>{{ item.nama_kategori }}</td>
+            <td v-if="item.is_active == 0">
+              <v-chip
+                color="red"
+                dark
+                small
+              >
+                Nonaktif
+              </v-chip>
+            </td>
+            <td v-else>
+               <v-chip
+                color="green"
+                dark
+                small
+              >
+                Aktif
+              </v-chip>
+            </td>
+            <td>Rp {{ formatPrice(item.plot_uang)  }}</td>
+            <td>
+              <v-icon
+                small
+                class="mr-2"
+                @click="editItem(item.id)"
+              >
+                mdi-pencil
+              </v-icon>
+              <!-- <v-icon
+                small
+                @click="deleteItem(item.id)"
+              >
+                mdi-delete
+              </v-icon> -->
+            </td>
+          </tr>
+        </tbody>
     </template>
     <template v-slot:no-data>
       <v-btn
@@ -136,21 +168,43 @@
       </v-btn>
     </template>
 
-     <template v-slot:item.status="{ item }">
+     <!-- <template v-slot:item.is_active="{ item }">
       <v-chip
-        :color="getColor(item.status)"
+        :color="getColor(item.is_active)"
         dark
       >
         {{ item.status }}
       </v-chip>
-    </template>
-  </v-data-table>
+    </template> -->
+    </v-data-table>
+
+    <v-snackbar
+      v-model="snackbar"
+      color="red"
+      right
+    >
+      {{ text }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="white"
+          text
+          v-bind="attrs"
+          @click="snackbar = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
 <script>
+import axios from "axios";
   export default {
     data: () => ({
+      token: localStorage.getItem('token'),
+      url:'',
       dialog: false,
       dialogDelete: false,
       headers: [
@@ -158,25 +212,30 @@
           text: 'Nama Kategori',
           align: 'start',
           sortable: false,
-          value: 'nama',
+          value: 'nama_kategori',
         },
-        { text: 'Status', value: 'status' },
-        { text: 'Plot Keuangan', value: 'plot' },
+        { text: 'Status', value: 'status', sortable: false },
+        { text: 'Plot Keuangan', value: 'plot_uang' },
         { text: 'Aksi', value: 'actions', sortable: false },
       ],
       dataku: [],
       editedIndex: -1,
       editedItem: {
-        nama: '',
-        status: '',
-        plot: 0,
+        id: '',
+        nama_kategori: '',
+        status: null,
+        plot_uang: 0,
       },
       defaultItem: {
-        nama: '',
-        status: '',
-        plot: 0,
+        id: '',
+        nama_kategori: '',
+        status: null,
+        plot_uang: 0,
       },
-      status: ['Aktif', 'Nonaktif'],
+      status: [{text: 'Aktif', value: 1}, {text: 'Nonaktif', value: 0}],
+      loading: false,
+      snackbar: false,
+      text: `Gagal`,
     }),
 
     computed: {
@@ -195,36 +254,50 @@
     },
 
     created () {
+      this.url = 'http://localhost:8000/api/kategori'
       this.initialize()
     },
 
     methods: {
       initialize () {
-        this.dataku = [
-          {
-            nama: 'Makanan & Minuman',
-            status: 'Aktif',
-            plot: 70000,
-          },
-        ]
+        axios.get(this.url,  {headers: {'Authorization': 'Bearer '+this.token, 'Content-Type': 'application/json', 'Accept': 'application/json'}, params:{paging: this.paging, search:this.search}})
+        .then(response => {
+          this.dataku = response.data.data.data
+        })
+        .catch(errors => {
+          console.log(errors)
+        });
+
       },
 
       editItem (item) {
-        this.editedIndex = this.dataku.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
+        this.editedIndex = 0
+        // console.log( this.editedIndex )
+        axios.get(this.url +'/' +item, {headers: {'Authorization': 'Bearer '+this.token, 'Content-Type': 'application/json', 'Accept': 'application/json'}})
+            .then(response => { 
+              this.editedItem.id = response.data.data.id
+              this.editedItem.nama_kategori = response.data.data.nama_kategori
+              this.editedItem.status = response.data.data.is_active
+              this.editedItem.plot_uang = response.data.data.plot_uang
+              this.dialog = true
+              // console.log(this.editedItem.id )
+
+            })
+            .catch(errors => {
+              console.log(errors)
+            })
       },
 
-      deleteItem (item) {
-        this.editedIndex = this.dataku.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialogDelete = true
-      },
+      // deleteItem (item) {
+      //   this.editedIndex = this.dataku.indexOf(item)
+      //   this.editedItem = Object.assign({}, item)
+      //   this.dialogDelete = true
+      // },
 
-      deleteItemConfirm () {
-        this.dataku.splice(this.editedIndex, 1)
-        this.closeDelete()
-      },
+      // deleteItemConfirm () {
+      //   this.dataku.splice(this.editedIndex, 1)
+      //   this.closeDelete()
+      // },
 
       close () {
         this.dialog = false
@@ -234,27 +307,70 @@
         })
       },
 
-      closeDelete () {
-        this.dialogDelete = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        })
-      },
+      // closeDelete () {
+      //   this.dialogDelete = false
+      //   this.$nextTick(() => {
+      //     this.editedItem = Object.assign({}, this.defaultItem)
+      //     this.editedIndex = -1
+      //   })
+      // },
 
       save () {
         if (this.editedIndex > -1) {
-          Object.assign(this.dataku[this.editedIndex], this.editedItem)
+            let id = this.editedItem.id
+            let data = {
+              // id: this.editedItem.id,
+              nama_kategori: this.editedItem.nama_kategori,
+              is_active: this.editedItem.status,
+              plot_uang: this.editedItem.plot_uang,
+            };
+
+          this.loading = true
+
+           axios.put(this.url +'/' + id, data, {headers: {'Authorization': 'Bearer '+this.token, 'Content-Type': 'application/json', 'Accept': 'application/json'}})
+            .then(() => { 
+              this.initialize()
+              this.loading = false
+            })
+            .catch(errors => {
+              this.loading = false
+              this.snackbar = true
+              console.log(errors)
+            })
         } else {
-          this.dataku.push(this.editedItem)
+          // console.log(this.editedIndex)
+          let data = {
+            nama_kategori: this.editedItem.nama_kategori,
+            is_active: this.editedItem.status,
+            plot_uang: this.editedItem.plot_uang,
+          };
+
+          this.loading = true
+
+          axios.post(this.url, data, {headers: {'Authorization': 'Bearer '+this.token, 'Content-Type': 'application/json', 'Accept': 'application/json'}})
+            .then(() => {
+            this.initialize()
+            this.loading = false
+          }).catch((error) => {
+            this.loading = false
+            this.snackbar = true
+            console.log(error)
+          });
+        
         }
+        this.editedIndex = -1
         this.close()
       },
 
       getColor (status) {
-        if (status == 'Aktif') return 'green'
+        if (status == '1') return 'green'
         else return 'red'
       },
+
+      formatPrice(value) {
+        let val = (value/1).toFixed(2).replace('.', ',')
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+      }
     },
   }
 </script>
