@@ -46,9 +46,9 @@
         items: [
           { title: 'Dashboard', icon: 'mdi-view-dashboard', link: '/' },
           { title: 'Data Harian', icon: 'mdi-cash-multiple', link: '/form' },
-          { title: 'Hutang', icon: 'mdi-notebook', link: '/hutang' },
           { title: 'Kategori', icon: 'mdi-archive', link: '/kategori' },
-          { title: 'Rekap', icon: 'mdi-chart-line', link: '/rekap' },
+          //  { title: 'Rencana Anggaran', icon: 'mdi-cash', link: '/anggaran' },
+          { title: 'Hutang', icon: 'mdi-notebook', link: '/hutang' },
           { title: 'Mitra', icon: 'mdi-contacts', link: '/mitra' },
           { title: 'Pengaturan', icon: 'mdi-cogs', link: '/pengaturan' },
         ],

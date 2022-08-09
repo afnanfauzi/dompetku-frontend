@@ -4,11 +4,11 @@ import LoginView from '@/views/Login.vue'
 import LoggedInLayout from '@/views/LoggedInLayout.vue'
 import Dashboard from '@/views/system/Dashboard.vue'
 import Kategori from '@/views/system/Kategori.vue'
-import Rekap from '@/views/system/Rekap.vue'
 import Mitra from '@/views/system/Mitra.vue'
 import Form from '@/views/system/Form.vue'
 import Hutang from '@/views/system/Hutang.vue'
 import Pengaturan from '@/views/system/Pengaturan.vue'
+// import Anggaran from '@/views/system/Anggaran.vue'
 
 Vue.use(VueRouter)
 
@@ -34,17 +34,17 @@ const routes = [
         name: 'form',
         component: Form,
       },
+      // {
+      //   title : 'Anggaran',
+      //   path: '/anggaran',
+      //   name: 'anggaran',
+      //   component: Anggaran,
+      // },
       {
         title : 'Hutang',
         path: '/hutang',
         name: 'hutang',
         component: Hutang,
-      },
-      {
-        title : 'Rekap',
-        path: '/rekap',
-        name: 'rekap',
-        component: Rekap,
       },
       {
         title : 'Kategori',

@@ -148,6 +148,8 @@ export default {
         mounted() {
             if (this.loggedIn) {
                 return this.$router.push({ name: 'dashboard' })
+            }else{
+                return this.$router.push({ name: 'login' })
             }
         },
         
