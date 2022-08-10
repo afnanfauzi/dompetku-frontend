@@ -291,7 +291,7 @@ import axios from "axios";
     },
 
     created () {
-      this.url = 'http://localhost:8000/api/kategori'
+      this.url = 'https://dompetku-api.herokuapp.com/api/kategori'
       this.initialize()
     },
 

@@ -106,11 +106,11 @@ export default {
                 this.alertLogin = false
                 this.$refs.form.validate()
                 if (this.email && this.password) {
-                    axios.get('http://localhost:8000/sanctum/csrf-cookie')
+                    axios.get('https://dompetku-api.herokuapp.com/sanctum/csrf-cookie')
                         .then(response => {
                             //debug cookie
                             console.log(response)
-                            axios.post('http://localhost:8000/api/login', {
+                            axios.post('https://dompetku-api.herokuapp.com/api/login', {
                                 email: this.email,
                                 password: this.password
                             }).then(res => {

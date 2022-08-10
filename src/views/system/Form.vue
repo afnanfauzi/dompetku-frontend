@@ -359,7 +359,7 @@ import axios from 'axios'
 
     created () {
       this.total_transaksi = '0'
-      this.url = 'http://localhost:8000/api/transaksi'
+      this.url = 'https://dompetku-api.herokuapp.com/api/transaksi'
       this.tanggal_data = (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)
       this.initialize()
     },
@@ -380,7 +380,7 @@ import axios from 'axios'
 
       editItem (item) {
         this.editedIndex = 0
-        this.urlKategori = 'http://localhost:8000/api/kategori'
+        this.urlKategori = 'https://dompetku-api.herokuapp.com/api/kategori'
 
         axios.get(this.urlKategori,  {headers: {'Authorization': 'Bearer '+this.token, 'Content-Type': 'application/json', 'Accept': 'application/json'}, params:{paging: this.paging, search:this.search, user_id:this.user_id}})
         .then(response => {
@@ -543,7 +543,7 @@ import axios from 'axios'
       dialogOpen(){
         this.dialog = true
 
-        this.urlKategori = 'http://localhost:8000/api/kategori'
+        this.urlKategori = 'https://dompetku-api.herokuapp.com/api/kategori'
 
         axios.get(this.urlKategori,  {headers: {'Authorization': 'Bearer '+this.token, 'Content-Type': 'application/json', 'Accept': 'application/json'}, params:{paging: this.paging, search:this.search, user_id:this.user_id}})
         .then(response => {
