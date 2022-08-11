@@ -117,49 +117,30 @@
                 </v-card-actions>
               </v-card>
             </v-dialog>
-            <!-- <v-dialog v-model="dialogDelete" max-width="500px">
-              <v-card>
-                  <v-card-title class="text-h5">
-                  Hapus Data
-                  </v-card-title>
-                  <v-card-text>Apakah kamu yakin akan menghapus data ini?</v-card-text>
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="closeDelete">Tutup</v-btn>
-                    <v-btn color="blue darken-1" text @click="deleteItemConfirm">Hapus</v-btn>
-                  </v-card-actions>
-              </v-card>
-            </v-dialog> -->
           </v-toolbar>
         </template>
-        <template
-            v-slot:body="{ items }"
-          >
-            <tbody v-if="items.length > 0">
-              <tr
-                v-for="item in items"
-                :key="item.id"
-              >
-                <td>{{ item.nama_kategori }}</td>
-                <td v-if="item.is_active == 0">
-                  <v-chip
-                    color="red"
-                    dark
-                    small
-                  >
-                    Nonaktif
-                  </v-chip>
-                </td>
-                <td v-else>
-                  <v-chip
-                    color="green"
-                    dark
-                    small
-                  >
-                    Aktif
-                  </v-chip>
-                </td>
-                <td v-if="item.jenis_transaksi == 0">
+        <template v-slot:item.is_active="{ item }">
+          <td v-if="item.is_active == 0">
+            <v-chip
+              color="red"
+              dark
+              small
+            >
+              Nonaktif
+            </v-chip>
+          </td>
+          <td v-else>
+            <v-chip
+              color="green"
+              dark
+              small
+            >
+              Aktif
+            </v-chip>
+          </td>
+        </template>
+        <template v-slot:item.jenis_transaksi="{ item }">
+          <td v-if="item.jenis_transaksi == 0">
                   <v-chip
                     color="red"
                     outlined
@@ -167,39 +148,30 @@
                   >
                     Pengeluaran
                   </v-chip>
-                </td>
-                <td v-else>
-                  <v-chip
-                    color="blue"
-                    outlined
-                    small
-                  >
-                    Pemasukan
-                  </v-chip>
-                </td>
-                <td>Rp {{ formatPrice(item.rencana_anggaran)  }}</td>
-                <td>
-                  <v-icon
-                    small
-                    class="mr-2"
-                    @click="editItem(item.id)"
-                  >
-                    mdi-pencil
-                  </v-icon>
-                  <!-- <v-icon
-                    small
-                    @click="deleteItem(item.id)"
-                  >
-                    mdi-delete
-                  </v-icon> -->
-                </td>
-              </tr>
-            </tbody>
-            <tbody v-else>
-                <tr>
-                  <td :colspan="headers.length" style="text-align: center">Data tidak tersedia.</td>
-                </tr>
-              </tbody>
+          </td>
+          <td v-else>
+            <v-chip
+              color="blue"
+              outlined
+              small
+            >
+              Pemasukan
+            </v-chip>
+          </td>
+        </template>
+        <template v-slot:item.rencana_anggaran="{ item }">
+           <td>Rp {{ formatPrice(item.rencana_anggaran)  }}</td>
+        </template>
+         <template v-slot:item.actions="{ item }">
+          <td>
+            <v-icon
+              small
+              class="mr-2"
+              @click="editItem(item.id)"
+            >
+              mdi-pencil
+            </v-icon>
+          </td>
         </template>
         </v-data-table>
       </v-col>
@@ -243,7 +215,7 @@ import axios from "axios";
           sortable: false,
           value: 'nama_kategori',
         },
-        { text: 'Status', value: 'status', sortable: false },
+        { text: 'Status', value: 'is_active', sortable: false },
         { text: 'Jenis Transaksi', value: 'jenis_transaksi' },
         { text: 'Rencana Anggaran', value: 'rencana_anggaran' },
         { text: 'Aksi', value: 'actions', sortable: false },
@@ -291,7 +263,7 @@ import axios from "axios";
     },
 
     created () {
-      this.url = 'https://dompetku-api.herokuapp.com/api/kategori'
+      this.url = 'http://127.0.0.1:8000/api/kategori'
       this.initialize()
     },
 

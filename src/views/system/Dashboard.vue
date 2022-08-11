@@ -57,51 +57,23 @@
         md="12">
       <v-data-table
       :headers="headers"
-      :items="anggaran"
+      :items="anggaran[0]"
       :items-per-page="5"
       class="elevation-1"
       >
-       <template
-            v-slot:body="{ items }"
-          >
-            <tbody v-if="items.length > 0">
-              <tr
-                v-for="item in items[0]"
-                :key="item.kategori_id"
-              >
-                <td>{{ item.nama_kategori }}</td>
-                <td>Rp {{ formatPrice(item.rencana_anggaran)  }}</td>
-                <td>Rp {{ formatPrice(item.anggaran_digunakan)  }}</td>
-                <td>Rp {{ formatPrice(item.anggaran_sisa)  }}</td>
-              </tr>
-            </tbody>
-            <tbody v-else>
-                <tr>
-                  <td :colspan="headers.length" style="text-align: center">Data tidak tersedia.</td>
-                </tr>
-              </tbody>
+        <template v-slot:item.nama_kategori="{ item }">
+          <td>{{ item.nama_kategori }}</td>
+        </template>
+        <template v-slot:item.rencana_anggaran="{ item }">
+          <td>Rp {{ formatPrice(item.rencana_anggaran)  }}</td>
+        </template>
+        <template v-slot:item.anggaran_terpakai="{ item }">
+          <td>Rp {{ formatPrice(item.anggaran_digunakan)  }}</td>
+        </template>
+        <template v-slot:item.sisa_anggaran="{ item }">
+          <td>Rp {{ formatPrice(item.anggaran_sisa)  }}</td>
         </template>
       </v-data-table>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col
-        cols="12"
-        sm="6"
-        md="4">
-        <v-card
-        class="pa-5">
-          <Bar
-          :chart-options="chartOptions"
-          :chart-data="chartData"
-          :chart-id="chartId"
-          :dataset-id-key="datasetIdKey"
-          :plugins="plugins"
-          :css-classes="cssClasses"
-          :styles="styles"
-          :width="width"
-          :height="height"
-        /></v-card>
       </v-col>
     </v-row>
   </v-container>
@@ -185,7 +157,7 @@ export default {
 
   methods:{
       initialize(){
-        this.url = 'https://dompetku-api.herokuapp.com/api/dashboard'
+        this.url = 'http://127.0.0.1:8000/api/dashboard'
         // console.log(this.date)
         this.tanggal_awal = this.date[0]
         this.tanggal_akhir = this.date[1]
