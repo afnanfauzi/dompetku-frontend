@@ -124,7 +124,7 @@ export default {
 
   methods:{
       initialize(){
-        this.url = 'http://127.0.0.1:8000/api/dashboard'
+        this.url = 'https://dompetku-api.herokuapp.com/api/dashboard'
         // console.log(this.date)
         this.tanggal_awal = this.date[0]
         this.tanggal_akhir = this.date[1]
