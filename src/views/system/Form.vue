@@ -139,6 +139,15 @@
                           ></v-text-field>
                         </v-col>
                       </v-row>
+                      <v-row no-gutters class="mt-n5 ml-3">
+                        <v-col
+                          cols="12"
+                          sm="12"
+                          md="12"
+                        >
+                         <p class="text-subtitle-2">Rp {{ formatPrice(editedItem.total_uang)  }}</p>
+                        </v-col>
+                      </v-row>
                       <v-row no-gutters>
                         <v-col
                         cols="12"
@@ -255,6 +264,11 @@
               </v-icon>
             </td>
           </template>
+          <template
+            v-slot:no-data
+          >
+            Tidak ada data.
+          </template>
         </v-data-table>
 
        <v-snackbar
@@ -370,7 +384,14 @@ import axios from 'axios'
             // console.log(this.total_transaksi)
           })
           .catch(errors => {
-            console.log(errors)
+             if (errors.response.status === 401) {
+            localStorage.removeItem('loggedIn')
+            localStorage.removeItem('token')
+            localStorage.removeItem('id_user')
+            localStorage.removeItem('name')
+            this.loggedIn = false
+            this.$router.push({ name: 'login' })
+          }
           });
       },
 
@@ -384,7 +405,14 @@ import axios from 'axios'
           this.kategori = response.data.data.kategori_aktif.data
         })
         .catch(errors => {
-          console.log(errors)
+           if (errors.response.status === 401) {
+            localStorage.removeItem('loggedIn')
+            localStorage.removeItem('token')
+            localStorage.removeItem('id_user')
+            localStorage.removeItem('name')
+            this.loggedIn = false
+            this.$router.push({ name: 'login' })
+          }
         });
 
         axios.get(this.url +'/' +item, {headers: {'Authorization': 'Bearer '+this.token, 'Content-Type': 'application/json', 'Accept': 'application/json'}})
@@ -397,7 +425,14 @@ import axios from 'axios'
             this.dialog = true
           })
           .catch(errors => {
-            console.log(errors)
+             if (errors.response.status === 401) {
+            localStorage.removeItem('loggedIn')
+            localStorage.removeItem('token')
+            localStorage.removeItem('id_user')
+            localStorage.removeItem('name')
+            this.loggedIn = false
+            this.$router.push({ name: 'login' })
+          }
           });
       },
 
@@ -408,7 +443,14 @@ import axios from 'axios'
             this.dialogDelete = true
           })
           .catch(errors => {
-            console.log(errors)
+             if (errors.response.status === 401) {
+            localStorage.removeItem('loggedIn')
+            localStorage.removeItem('token')
+            localStorage.removeItem('id_user')
+            localStorage.removeItem('name')
+            this.loggedIn = false
+            this.$router.push({ name: 'login' })
+          }
           });
 
       },
@@ -547,7 +589,14 @@ import axios from 'axios'
           // console.log(response.data.data.kategori_aktif.data)
         })
         .catch(errors => {
-          console.log(errors)
+           if (errors.response.status === 401) {
+            localStorage.removeItem('loggedIn')
+            localStorage.removeItem('token')
+            localStorage.removeItem('id_user')
+            localStorage.removeItem('name')
+            this.loggedIn = false
+            this.$router.push({ name: 'login' })
+          }
         });
       }
     },

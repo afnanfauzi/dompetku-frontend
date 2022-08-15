@@ -73,6 +73,11 @@
         <template v-slot:item.sisa_anggaran="{ item }">
           <td>Rp {{ formatPrice(item.anggaran_sisa)  }}</td>
         </template>
+        <template
+          v-slot:no-data
+        >
+          Tidak ada data.
+        </template>
       </v-data-table>
       </v-col>
     </v-row>
@@ -81,44 +86,13 @@
 
 <script>
 import axios from 'axios'
-import { Bar } from 'vue-chartjs/legacy'
+// import { Bar } from 'vue-chartjs/legacy'
 
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+// import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
+// ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
 export default {
-  components: { Bar },
-  props: {
-    chartId: {
-      type: String,
-      default: 'bar-chart'
-    },
-    datasetIdKey: {
-      type: String,
-      default: 'label'
-    },
-    width: {
-      type: Number,
-      default: 400
-    },
-    height: {
-      type: Number,
-      default: 400
-    },
-    cssClasses: {
-      default: '',
-      type: String
-    },
-    styles: {
-      type: Object,
-      default: () => {}
-    },
-    plugins: {
-      type: Object,
-      default: () => {}
-    }
-  },
   data() {
     return {
       token: localStorage.getItem('token'),
@@ -126,13 +100,6 @@ export default {
       tanggal_awal: '',
       tanggal_akhir: '',
       url:'',
-      chartData: {
-        labels: [ 'January', 'February', 'March' ],
-        datasets: [ { data: [40, 20, 12] } ]
-      },
-      chartOptions: {
-        responsive: true
-      },
       date: [],
       modal: false,
       headers: [
@@ -166,7 +133,14 @@ export default {
               this.anggaran = response.data.data.list_anggaran
             })
             .catch(errors => {
-              console.log(errors)
+               if (errors.response.status === 401) {
+                localStorage.removeItem('loggedIn')
+                localStorage.removeItem('token')
+                localStorage.removeItem('id_user')
+                localStorage.removeItem('name')
+                this.loggedIn = false
+                this.$router.push({ name: 'login' })
+              }
             });
       },
 

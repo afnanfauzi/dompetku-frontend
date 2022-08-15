@@ -95,6 +95,15 @@
                         ></v-text-field>
                       </v-col>
                     </v-row>
+                    <v-row no-gutters class="mt-n5 ml-3">
+                        <v-col
+                          cols="12"
+                          sm="12"
+                          md="12"
+                        >
+                         <p class="text-subtitle-2">Rp {{ formatPrice(editedItem.rencana_anggaran)  }}</p>
+                        </v-col>
+                      </v-row>
                   </v-container>
                 </v-card-text>
 
@@ -162,7 +171,7 @@
         <template v-slot:item.rencana_anggaran="{ item }">
            <td>Rp {{ formatPrice(item.rencana_anggaran)  }}</td>
         </template>
-         <template v-slot:item.actions="{ item }">
+        <template v-slot:item.actions="{ item }">
           <td>
             <v-icon
               small
@@ -172,6 +181,11 @@
               mdi-pencil
             </v-icon>
           </td>
+        </template>
+        <template
+          v-slot:no-data
+        >
+          Tidak ada data.
         </template>
         </v-data-table>
       </v-col>
@@ -275,7 +289,14 @@ import axios from "axios";
           this.dataku = response.data.data.kategori.data
         })
         .catch(errors => {
-          console.log(errors)
+          if (errors.response.status === 401) {
+            localStorage.removeItem('loggedIn')
+            localStorage.removeItem('token')
+            localStorage.removeItem('id_user')
+            localStorage.removeItem('name')
+            this.loggedIn = false
+            this.$router.push({ name: 'login' })
+          }
         });
 
       },
@@ -295,20 +316,16 @@ import axios from "axios";
 
             })
             .catch(errors => {
-              console.log(errors)
+               if (errors.response.status === 401) {
+                localStorage.removeItem('loggedIn')
+                localStorage.removeItem('token')
+                localStorage.removeItem('id_user')
+                localStorage.removeItem('name')
+                this.loggedIn = false
+                this.$router.push({ name: 'login' })
+              }
             })
       },
-
-      // deleteItem (item) {
-      //   this.editedIndex = this.dataku.indexOf(item)
-      //   this.editedItem = Object.assign({}, item)
-      //   this.dialogDelete = true
-      // },
-
-      // deleteItemConfirm () {
-      //   this.dataku.splice(this.editedIndex, 1)
-      //   this.closeDelete()
-      // },
 
       close () {
         this.dialog = false
@@ -317,14 +334,6 @@ import axios from "axios";
           this.editedIndex = -1
         })
       },
-
-      // closeDelete () {
-      //   this.dialogDelete = false
-      //   this.$nextTick(() => {
-      //     this.editedItem = Object.assign({}, this.defaultItem)
-      //     this.editedIndex = -1
-      //   })
-      // },
 
       save () {
         if (this.editedIndex > -1) {
@@ -354,7 +363,16 @@ import axios from "axios";
               this.snackbar.color = 'red'
               this.snackbar.action = 'white'
               this.snackbar.show = true
-              console.log(errors)
+
+
+               if (errors.response.status === 401) {
+                localStorage.removeItem('loggedIn')
+                localStorage.removeItem('token')
+                localStorage.removeItem('id_user')
+                localStorage.removeItem('name')
+                this.loggedIn = false
+                this.$router.push({ name: 'login' })
+              }
             })
 
 
@@ -378,18 +396,25 @@ import axios from "axios";
             this.snackbar.color = 'green'
             this.snackbar.action = 'white'
             this.snackbar.show = true
-          }).catch(() => {
+          }).catch(errors => {
             this.loading = false
             this.snackbar.text = 'Gagal menambahkan data'
             this.snackbar.color = 'red'
             this.snackbar.action = 'white'
             this.snackbar.show = true
+
+             if (errors.response.status === 401) {
+                localStorage.removeItem('loggedIn')
+                localStorage.removeItem('token')
+                localStorage.removeItem('id_user')
+                localStorage.removeItem('name')
+                this.loggedIn = false
+                this.$router.push({ name: 'login' })
+              }
           });
         
         }
-        // this.snackbar.text = ''
-        // this.snackbar.color = 'red'
-        // this.snackbar.action = 'white'
+       
         this.editedIndex = -1
         this.close()
       },

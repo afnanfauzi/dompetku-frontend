@@ -147,9 +147,9 @@ export default {
         //check user already logged in
         mounted() {
             if (this.loggedIn) {
-                return this.$router.push({ name: 'dashboard' })
+                return this.$router.push({ name: 'dashboard' }).catch(() => {})
             }else{
-                return this.$router.push({ name: 'login' })
+                return this.$router.push({ name: 'login' }).catch(() => {})
             }
         },
         
