@@ -229,7 +229,7 @@ import axios from "axios";
     },
 
     created () {
-      this.url = 'https://dompetku-api.herokuapp.com/api/mitra'
+      this.url = 'http://127.0.0.1:8000/api/mitra'
       this.initialize()
     },
 

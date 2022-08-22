@@ -60,6 +60,7 @@
       :items="anggaran[0]"
       :items-per-page="5"
       class="elevation-1"
+      hide-default-footer
       >
         <template v-slot:item.nama_kategori="{ item }">
           <td>{{ item.nama_kategori }}</td>
@@ -81,16 +82,82 @@
       </v-data-table>
       </v-col>
     </v-row>
+     <v-row>
+      <v-col
+         cols="12"
+        sm="6"
+        md="4"
+        >
+         <v-autocomplete
+            v-model="kategori_id"
+            :items="kategori"
+            item-text="nama_kategori"
+            item-value="id"
+            label="Pilih kategori"
+            solo
+            @change=reloadTabel()
+          ></v-autocomplete>
+        
+        </v-col>
+    </v-row>
+    <v-row class="mt-n7">
+      <v-col
+       cols="12"
+        sm="12"
+        md="12">
+      <v-data-table
+      :headers="ringkasanHeader"
+      :items="ringkasan"
+      :items-per-page="5"
+      class="elevation-1"
+      >
+        <template v-slot:item.catatan="{ item }">
+          <td>{{ item.catatan }}</td>
+        </template>
+         <template v-slot:item.tanggal_transaksi="{ item }">
+         <td>{{ konversi_tanggal(item.tanggal_transaksi) }}</td>
+        </template>
+        <template v-slot:item.jenis_transaksi="{ item }">
+         <td v-if="item.kategori.jenis_transaksi == 0">
+                  <v-chip
+                    color="red"
+                    outlined
+                    small
+                  >
+                    Pengeluaran
+                  </v-chip>
+          </td>
+          <td v-else>
+            <v-chip
+              color="blue"
+              outlined
+              small
+            >
+              Pemasukan
+            </v-chip>
+          </td>
+        </template>
+        <template v-slot:item.nama_kategori="{ item }">
+          <td>{{ item.kategori.nama_kategori  }}</td>
+        </template>
+        <template v-slot:item.total_uang="{ item }">
+          <td>Rp {{ formatPrice(item.total_uang)  }}</td>
+        </template>
+        <template
+          v-slot:no-data
+        >
+          Tidak ada data.
+        </template>
+      </v-data-table>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script>
 import axios from 'axios'
-// import { Bar } from 'vue-chartjs/legacy'
-
-// import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
-
-// ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
+import moment from 'moment'
+import 'moment/locale/id';
 
 export default {
   data() {
@@ -100,7 +167,12 @@ export default {
       tanggal_awal: '',
       tanggal_akhir: '',
       url:'',
+      urlKategori:'',
+      urlRingkasan:'',
       date: [],
+      ringkasan: [],
+      kategori: [],
+      kategori_id:'',
       modal: false,
       headers: [
           {
@@ -113,24 +185,57 @@ export default {
           { text: 'Anggaran Terpakai', value: 'anggaran_terpakai' },
           { text: 'Sisa Anggaran', value: 'sisa_anggaran' },
         ],
-      anggaran: []
+      ringkasanHeader: [
+          {
+            text: 'Catatan',
+            align: 'start',
+            sortable: false,
+            value: 'catatan',
+          },
+          { text: 'Tanggal Transaksi', value: 'tanggal_transaksi' },
+          { text: 'Jenis Transaksi', value: 'jenis_transaksi' },
+          { text: 'Nama Kategori', value: 'nama_kategori' },
+          { text: 'Total Uang', value: 'total_uang' },
+        ],
+      anggaran: [],
     }
   },
 
   created(){
     this.date = [new Date(new Date().setDate(1)).toISOString().substr(0, 10), (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)],
+    
+    this.urlKategori = 'http://127.0.0.1:8000/api/kategori'
+      axios.get(this.urlKategori,  {headers: {'Authorization': 'Bearer '+this.token, 'Content-Type': 'application/json', 'Accept': 'application/json'}, params:{paging: this.paging, user_id:this.user_id}})
+        .then(response => {
+          // console.log(response.data.data.kategori_aktif.data)
+          this.kategori = response.data.data.kategori_aktif.data
+          
+        })
+        .catch(errors => {
+          if (errors.response.status === 401) {
+            localStorage.removeItem('loggedIn')
+            localStorage.removeItem('token')
+            localStorage.removeItem('id_user')
+            localStorage.removeItem('name')
+            this.loggedIn = false
+            this.$router.push({ name: 'login' })
+          }
+        });
+
     this.initialize()    
   },
 
   methods:{
       initialize(){
-        this.url = 'https://dompetku-api.herokuapp.com/api/dashboard'
+        this.url = 'http://127.0.0.1:8000/api/dashboard'
         // console.log(this.date)
         this.tanggal_awal = this.date[0]
         this.tanggal_akhir = this.date[1]
-        axios.get(this.url,  {headers: {'Authorization': 'Bearer '+this.token, 'Content-Type': 'application/json', 'Accept': 'application/json'}, params:{user_id:this.user_id, tanggal_awal:this.tanggal_awal, tanggal_akhir:this.tanggal_akhir}})
+        axios.get(this.url,  {headers: {'Authorization': 'Bearer '+this.token, 'Content-Type': 'application/json', 'Accept': 'application/json'}, params:{user_id:this.user_id, tanggal_awal:this.tanggal_awal, tanggal_akhir:this.tanggal_akhir,  kategori:this.kategori_id }})
             .then(response => {
+              // console.log(response.data.data.ringkasan_transaksi)
               this.anggaran = response.data.data.list_anggaran
+              this.ringkasan = response.data.data.ringkasan_transaksi.data
             })
             .catch(errors => {
                if (errors.response.status === 401) {
@@ -142,6 +247,8 @@ export default {
                 this.$router.push({ name: 'login' })
               }
             });
+
+          // this.urlRingkasan = 'http://127.0.0.1:8000/api/dashboard'
       },
 
       formatPrice(value) {
@@ -149,14 +256,20 @@ export default {
         return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
       },
 
+      konversi_tanggal(date) {
+        moment.locale('id') 
+        return moment(date).format("DD MMMM YYYY")
+      },
+
       reloadTabel(){
         this.tanggal_awal = this.date[0]
         this.tanggal_akhir = this.date[1]
-        console.log(this.tanggal_awal)
+        // console.log(this.tanggal_awal)
 
-        axios.get(this.url,  {headers: {'Authorization': 'Bearer '+this.token, 'Content-Type': 'application/json', 'Accept': 'application/json'}, params:{user_id:this.user_id, tanggal_awal:this.tanggal_awal, tanggal_akhir:this.tanggal_akhir}})
+        axios.get(this.url,  {headers: {'Authorization': 'Bearer '+this.token, 'Content-Type': 'application/json', 'Accept': 'application/json'}, params:{user_id:this.user_id, tanggal_awal:this.tanggal_awal, tanggal_akhir:this.tanggal_akhir, kategori:this.kategori_id}})
             .then(response => {
-              this.anggaran = response.data.data.list_anggaran
+              this.anggaran = response.data.data.list_anggaran,
+              this.ringkasan = response.data.data.ringkasan_transaksi
             })
             .catch(() => {
               this.anggaran = []

@@ -319,6 +319,8 @@
 <script>
 import axios from 'axios'
 import moment from 'moment'
+import 'moment/locale/id';
+
   export default {
     data: () => ({
       dialog: false,
@@ -397,7 +399,7 @@ import moment from 'moment'
     },
 
     created () {
-       this.urlMitra = 'https://dompetku-api.herokuapp.com/api/mitra'
+       this.urlMitra = 'http://127.0.0.1:8000/api/mitra'
        axios.get(this.urlMitra,  {headers: {'Authorization': 'Bearer '+this.token, 'Content-Type': 'application/json', 'Accept': 'application/json'}, params:{paging: this.paging, search:this.search, user_id:this.user_id}})
           .then(response => {
             this.mitra = response.data.data.mitra_aktif.data
@@ -418,7 +420,7 @@ import moment from 'moment'
 
     methods: {
       initialize () {
-          this.url = 'https://dompetku-api.herokuapp.com/api/hutang'
+          this.url = 'http://127.0.0.1:8000/api/hutang'
           this.cari_mitra = this.nama_mitra
           axios.get(this.url,  {headers: {'Authorization': 'Bearer '+this.token, 'Content-Type': 'application/json', 'Accept': 'application/json'}, params:{mitra_id:this.cari_mitra, user_id:this.user_id}})
           .then(response => {
@@ -442,7 +444,7 @@ import moment from 'moment'
 
       editItem (item) {
         this.editedIndex = 0
-        this.urlMitra = 'https://dompetku-api.herokuapp.com/api/mitra'
+        this.urlMitra = 'http://127.0.0.1:8000/api/mitra'
 
         axios.get(this.urlMitra,  {headers: {'Authorization': 'Bearer '+this.token, 'Content-Type': 'application/json', 'Accept': 'application/json'}, params:{paging: this.paging, search:this.search, user_id:this.user_id}})
         .then(response => {
@@ -632,15 +634,15 @@ import moment from 'moment'
 
       },
 
-      konversi_tanggal() {
+      konversi_tanggal(date) {
         moment.locale('id') 
-        return moment().format('LL');
+        return moment(date).format("DD MMMM YYYY")
       },
 
       dialogOpen(){
         this.dialog = true
 
-        this.urlMitra = 'https://dompetku-api.herokuapp.com/api/mitra'
+        this.urlMitra = 'http://127.0.0.1:8000/api/mitra'
 
         axios.get(this.urlMitra,  {headers: {'Authorization': 'Bearer '+this.token, 'Content-Type': 'application/json', 'Accept': 'application/json'}, params:{paging: this.paging, search:this.search, user_id:this.user_id}})
         .then(response => {

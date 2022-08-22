@@ -277,7 +277,7 @@ import axios from "axios";
     },
 
     created () {
-      this.url = 'https://dompetku-api.herokuapp.com/api/kategori'
+      this.url = 'http://127.0.0.1:8000/api/kategori'
       this.initialize()
     },
 
