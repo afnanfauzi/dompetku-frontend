@@ -265,12 +265,11 @@ export default {
       reloadTabel(){
         this.tanggal_awal = this.date[0]
         this.tanggal_akhir = this.date[1]
-        // console.log(this.tanggal_awal)
 
         axios.get(this.url,  {headers: {'Authorization': 'Bearer '+this.token, 'Content-Type': 'application/json', 'Accept': 'application/json'}, params:{user_id:this.user_id, tanggal_awal:this.tanggal_awal, tanggal_akhir:this.tanggal_akhir, kategori:this.kategori_id}})
             .then(response => {
               this.anggaran = response.data.data.list_anggaran,
-              this.ringkasan = response.data.data.ringkasan_transaksi
+              this.ringkasan = response.data.data.ringkasan_transaksi.data
             })
             .catch(() => {
               this.anggaran = []
