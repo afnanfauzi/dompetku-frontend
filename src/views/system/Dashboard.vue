@@ -72,7 +72,8 @@
           <td>Rp {{ formatPrice(item.anggaran_digunakan)  }}</td>
         </template>
         <template v-slot:item.sisa_anggaran="{ item }">
-          <td>Rp {{ formatPrice(item.anggaran_sisa)  }}</td>
+          <td class="green--text" v-if="item.anggaran_sisa > 0">Rp {{ formatPrice(item.anggaran_sisa)  }}</td>
+          <td class="red--text" v-else > Rp {{ formatPrice(item.anggaran_sisa)  }}</td>
         </template>
         <template
           v-slot:no-data
