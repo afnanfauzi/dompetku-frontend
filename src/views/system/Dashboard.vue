@@ -204,7 +204,7 @@ export default {
   created(){
     this.date = [new Date(new Date().setDate(1)).toISOString().substr(0, 10), (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)],
     
-    this.urlKategori = 'http://127.0.0.1:8000/api/kategori'
+    this.urlKategori = 'https://dompetku-api.herokuapp.com/api/kategori'
       axios.get(this.urlKategori,  {headers: {'Authorization': 'Bearer '+this.token, 'Content-Type': 'application/json', 'Accept': 'application/json'}, params:{paging: this.paging, user_id:this.user_id}})
         .then(response => {
           // console.log(response.data.data.kategori_aktif.data)
@@ -227,7 +227,7 @@ export default {
 
   methods:{
       initialize(){
-        this.url = 'http://127.0.0.1:8000/api/dashboard'
+        this.url = 'https://dompetku-api.herokuapp.com/api/dashboard'
         // console.log(this.date)
         this.tanggal_awal = this.date[0]
         this.tanggal_akhir = this.date[1]
@@ -248,7 +248,7 @@ export default {
               }
             });
 
-          // this.urlRingkasan = 'http://127.0.0.1:8000/api/dashboard'
+          // this.urlRingkasan = 'https://dompetku-api.herokuapp.com/api/dashboard'
       },
 
       formatPrice(value) {
