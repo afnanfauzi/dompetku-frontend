@@ -60,7 +60,6 @@
       :items="anggaran[0]"
       :items-per-page="5"
       class="elevation-1"
-      hide-default-footer
       >
         <template v-slot:item.nama_kategori="{ item }">
           <td>{{ item.nama_kategori }}</td>
